@@ -46,29 +46,26 @@ Core capabilities:
 
 ## Product Architecture
 
-```mermaid
-flowchart LR
-    user["Windows user"] --> launcher["Neo RAG-Anything.exe"]
-    launcher --> webui["Browser GUI"]
-    webui --> ingest["Ingest pipeline"]
-    ingest --> parsers["PDF / Word / Text / HTML / Image parsers"]
-    parsers --> chunks["Chunk store"]
-    chunks --> json["index.json"]
-    chunks --> sqlite["SQLite FTS search cache"]
-    chunks --> chroma["Chroma vector index"]
-    webui --> query["Question request"]
-    query --> retrieval["Hybrid retrieval"]
-    retrieval --> json
-    retrieval --> sqlite
-    retrieval --> chroma
-    retrieval --> answer["Answer builder"]
-    answer --> local["Local extractive mode"]
-    answer --> ollama["Ollama llama3.2"]
-    answer --> hf["Hugging Face presets"]
-    answer --> openrouter["OpenRouter presets"]
-    answer --> refs["Answer with references"]
-    refs --> webui
-```
+![Neo RAG-Anything product architecture workflow](architecture-workflow.png)
+
+## Architecture Principles
+
+Neo RAG-Anything is designed around a local-first RAG workflow. The Windows
+launcher starts a browser-based GUI on the local machine, and document data is
+stored locally instead of being bundled into the application package.
+
+The workflow follows these principles:
+
+- **Local-first indexing**: uploaded files are parsed, chunked, and written to
+  local storage so users keep control of their document collection.
+- **Layered retrieval**: keyword search, phrase-aware matching, and vector
+  search work together to find relevant chunks.
+- **Grounded answering**: answers are assembled from retrieved context and
+  include references back to documents, chunks, pages, and source links.
+- **Flexible model routing**: users can answer with local extraction, Ollama,
+  Hugging Face, or OpenRouter depending on their setup and token availability.
+- **Optional web context**: public internet results can be appended as extra
+  context when a user wants a broader cross-check.
 
 ## How To Use The Windows ZIP
 
